@@ -35,8 +35,22 @@ jobs:
     - name: Build and Push Docker Image
       uses: mr-smithers-excellent/docker-build-push@v6
       with:
-        image: wfsettlement/corda-java
+        image: wfsettlement/fxinsta-sample
+        tags: latest        
         registry: docker.io
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
-        
+
+    - name: Deploy to Azure VM
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.AZ_VM_IP }}
+        username: ${{ secrets.AZ_VM_USERNAME }}
+        key: ${{ secrets.VM_SSH_PRIVATE_KEY }}
+        port: 22
+        script: |
+          eval "$(ssh-agent)"
+          ssh-add - <<<"${{ secrets.VM_SSH_PRIVATE_KEY }}"
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker pull wfsettlement/fxinsta-sample:latest
+          docker run -d -p 5000:5000 wfsettlement/fxinsta-sample:latest        

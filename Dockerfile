@@ -4,6 +4,4 @@
 #RUN ./gradlew build
 
 FROM ubuntu:latest
-COPY /build/nodes/ /workdir/
-
-
+COPY /build/nodes/PartyA /workdir/
