@@ -5,3 +5,4 @@
 
 FROM ubuntu:latest
 COPY /build/nodes/PartyA /workdir/
+CMD ["java", "-jar", "/app/PartyA/docker.jar"]
